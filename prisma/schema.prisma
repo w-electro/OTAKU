@@ -1,0 +1,424 @@
+// Prisma Schema for AnimeUltra 4K
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============ Authentication Models ============
+
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  emailVerified   DateTime?
+  password        String?
+  name            String?
+  image           String?
+  role            Role      @default(USER)
+  language        String    @default("en")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  accounts        Account[]
+  sessions        Session[]
+  subscription    Subscription?
+  watchHistory    WatchHistory[]
+  watchlist       Watchlist[]
+  downloads       Download[]
+  notifications   Notification[]
+  reviews         Review[]
+  streamTokens    StreamToken[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+// ============ Subscription Models ============
+
+model Subscription {
+  id                  String             @id @default(cuid())
+  userId              String             @unique
+  tier                SubscriptionTier
+  status              SubscriptionStatus @default(ACTIVE)
+  stripeCustomerId    String?
+  stripeSubscriptionId String?
+  currentPeriodStart  DateTime
+  currentPeriodEnd    DateTime
+  cancelAtPeriodEnd   Boolean            @default(false)
+  downloadsThisMonth  Int                @default(0)
+  downloadResetDate   DateTime
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+enum SubscriptionTier {
+  BASIC
+  PREMIUM
+  ULTIMATE
+  TRIAL
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  PAST_DUE
+  TRIALING
+  EXPIRED
+}
+
+// ============ Anime Content Models ============
+
+model Anime {
+  id              String    @id @default(cuid())
+  anilistId       Int?      @unique
+  malId           Int?      @unique
+  titleEnglish    String?
+  titleRomaji     String
+  titleNative     String?
+  titleArabic     String?
+  synopsis        String?   @db.Text
+  synopsisArabic  String?   @db.Text
+  coverImage      String?
+  bannerImage     String?
+  status          AnimeStatus @default(RELEASING)
+  format          AnimeFormat @default(TV)
+  season          AnimeSeason?
+  seasonYear      Int?
+  episodeCount    Int?
+  duration        Int?      // Average episode duration in minutes
+  averageScore    Float?
+  popularity      Int?
+  trending        Int?
+  isAdult         Boolean   @default(false)
+  source          String?
+  countryOfOrigin String?
+  startDate       DateTime?
+  endDate         DateTime?
+  nextAiringAt    DateTime?
+  trailerUrl      String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  genres          Genre[]
+  studios         Studio[]
+  episodes        Episode[]
+  watchHistory    WatchHistory[]
+  watchlist       Watchlist[]
+  reviews         Review[]
+  relatedAnime    AnimeRelation[] @relation("AnimeRelations")
+  relatedTo       AnimeRelation[] @relation("RelatedAnime")
+
+  @@index([titleRomaji])
+  @@index([averageScore])
+  @@index([popularity])
+  @@index([trending])
+  @@map("anime")
+}
+
+model Episode {
+  id              String        @id @default(cuid())
+  animeId         String
+  number          Int
+  title           String?
+  titleArabic     String?
+  synopsis        String?       @db.Text
+  thumbnail       String?
+  duration        Int?          // Duration in seconds
+  airDate         DateTime?
+
+  // 4K Enhanced Content
+  is4KEnhanced    Boolean       @default(false)
+  is4K240         Boolean       @default(false)
+  enhancedAt      DateTime?
+
+  // File Information
+  filePath1080p   String?
+  filePath4K      String?
+  filePath4K240   String?
+  fileSize1080p   BigInt?
+  fileSize4K      BigInt?
+  fileSize4K240   BigInt?
+
+  // Subtitles
+  subtitlesEn     String?
+  subtitlesAr     String?
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  anime           Anime         @relation(fields: [animeId], references: [id], onDelete: Cascade)
+  watchHistory    WatchHistory[]
+  downloads       Download[]
+  streamTokens    StreamToken[]
+
+  @@unique([animeId, number])
+  @@index([animeId])
+  @@map("episodes")
+}
+
+model Genre {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  nameArabic  String?
+  slug        String   @unique
+  anime       Anime[]
+
+  @@map("genres")
+}
+
+model Studio {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  nameArabic  String?
+  isMain      Boolean  @default(false)
+  anime       Anime[]
+
+  @@map("studios")
+}
+
+model AnimeRelation {
+  id            String       @id @default(cuid())
+  animeId       String
+  relatedId     String
+  relationType  RelationType
+
+  anime         Anime        @relation("AnimeRelations", fields: [animeId], references: [id], onDelete: Cascade)
+  related       Anime        @relation("RelatedAnime", fields: [relatedId], references: [id], onDelete: Cascade)
+
+  @@unique([animeId, relatedId])
+  @@map("anime_relations")
+}
+
+enum AnimeStatus {
+  RELEASING
+  FINISHED
+  NOT_YET_RELEASED
+  CANCELLED
+  HIATUS
+}
+
+enum AnimeFormat {
+  TV
+  TV_SHORT
+  MOVIE
+  SPECIAL
+  OVA
+  ONA
+  MUSIC
+}
+
+enum AnimeSeason {
+  WINTER
+  SPRING
+  SUMMER
+  FALL
+}
+
+enum RelationType {
+  SEQUEL
+  PREQUEL
+  ALTERNATIVE
+  SIDE_STORY
+  SPIN_OFF
+  ADAPTATION
+}
+
+// ============ User Activity Models ============
+
+model WatchHistory {
+  id           String    @id @default(cuid())
+  userId       String
+  animeId      String
+  episodeId    String
+  progress     Int       @default(0)  // Progress in seconds
+  completed    Boolean   @default(false)
+  watchedAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  anime        Anime     @relation(fields: [animeId], references: [id], onDelete: Cascade)
+  episode      Episode   @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, episodeId])
+  @@index([userId])
+  @@index([animeId])
+  @@map("watch_history")
+}
+
+model Watchlist {
+  id        String   @id @default(cuid())
+  userId    String
+  animeId   String
+  status    WatchlistStatus @default(PLAN_TO_WATCH)
+  addedAt   DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  anime     Anime    @relation(fields: [animeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, animeId])
+  @@map("watchlist")
+}
+
+enum WatchlistStatus {
+  WATCHING
+  COMPLETED
+  ON_HOLD
+  DROPPED
+  PLAN_TO_WATCH
+}
+
+model Download {
+  id          String    @id @default(cuid())
+  userId      String
+  episodeId   String
+  quality     String
+  token       String    @unique
+  expiresAt   DateTime
+  downloadedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  episode     Episode   @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("downloads")
+}
+
+model StreamToken {
+  id          String    @id @default(cuid())
+  userId      String
+  episodeId   String
+  token       String    @unique
+  quality     String
+  ipAddress   String?
+  userAgent   String?
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  episode     Episode   @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+  @@map("stream_tokens")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  animeId   String
+  rating    Float
+  content   String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  anime     Anime    @relation(fields: [animeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, animeId])
+  @@map("reviews")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  data      Json?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  NEW_EPISODE
+  SUBSCRIPTION_EXPIRING
+  SUBSCRIPTION_RENEWED
+  DOWNLOAD_READY
+  SYSTEM
+}
+
+// ============ Admin/System Models ============
+
+model SyncLog {
+  id          String   @id @default(cuid())
+  source      String
+  status      String
+  animeCount  Int
+  episodeCount Int
+  errors      Json?
+  startedAt   DateTime
+  completedAt DateTime?
+
+  @@map("sync_logs")
+}
+
+model Setting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json
+  updatedAt   DateTime @updatedAt
+
+  @@map("settings")
+}

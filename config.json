@@ -1,0 +1,125 @@
+{
+  "site": {
+    "name": "AnimeUltra 4K",
+    "domain": "animeultra4k.com",
+    "defaultLanguage": "en",
+    "supportedLanguages": ["en", "ar"],
+    "description": "Premium 4K 240fps Anime Streaming Platform",
+    "logo": "/images/logo.png"
+  },
+  "subscription": {
+    "tiers": {
+      "basic": {
+        "id": "basic",
+        "name": "Basic",
+        "price": 9.99,
+        "currency": "USD",
+        "downloadLimit": 10,
+        "quality": ["1080p"],
+        "concurrentStreams": 1,
+        "features": [
+          "Access to 1080p content",
+          "10 downloads per month",
+          "Standard support"
+        ]
+      },
+      "premium": {
+        "id": "premium",
+        "name": "Premium",
+        "price": 19.99,
+        "currency": "USD",
+        "downloadLimit": 50,
+        "quality": ["1080p", "4K"],
+        "concurrentStreams": 2,
+        "features": [
+          "Access to 4K content",
+          "50 downloads per month",
+          "Priority support",
+          "Early access to new releases"
+        ]
+      },
+      "ultimate": {
+        "id": "ultimate",
+        "name": "Ultimate",
+        "price": 29.99,
+        "currency": "USD",
+        "downloadLimit": -1,
+        "quality": ["1080p", "4K", "4K240"],
+        "concurrentStreams": 4,
+        "features": [
+          "Access to 4K 240fps content",
+          "Unlimited downloads",
+          "VIP support",
+          "Early access to new releases",
+          "Exclusive content",
+          "No ads"
+        ]
+      }
+    },
+    "trialDays": 7,
+    "paymentMethods": ["stripe", "paypal"]
+  },
+  "content": {
+    "apiSources": ["anilist", "jikan"],
+    "autoSync": true,
+    "syncInterval": "daily",
+    "minRatingToShow": 6.0,
+    "episodeStoragePath": "/media/4k-episodes/",
+    "streamingProtocol": "HLS",
+    "thumbnailPath": "/media/thumbnails/",
+    "bannerPath": "/media/banners/"
+  },
+  "streaming": {
+    "enableExternalPlayer": true,
+    "vlcProtocol": "vlc://",
+    "tokenExpiration": 3600,
+    "chunkSize": "10MB",
+    "enableDownload": true,
+    "downloadExpiration": 172800,
+    "maxBitrate": {
+      "1080p": 8000,
+      "4K": 25000,
+      "4K240": 50000
+    }
+  },
+  "ui": {
+    "heroSliderAutoplay": true,
+    "sliderInterval": 5000,
+    "cardsPerRow": {
+      "desktop": 6,
+      "tablet": 4,
+      "mobile": 2
+    },
+    "enableDarkMode": true,
+    "defaultTheme": "dark",
+    "primaryColor": "#FF6B6B",
+    "accentColor": "#4ECDC4",
+    "backgroundGradient": ["#1a1a2e", "#16213e"]
+  },
+  "admin": {
+    "uploadMaxSize": "50GB",
+    "allowBatchUpload": true,
+    "requireApproval": false,
+    "allowedFormats": ["mp4", "mkv", "webm"],
+    "thumbnailAutoGenerate": true
+  },
+  "security": {
+    "jwtSecret": "your-super-secret-jwt-key-change-in-production",
+    "tokenRefreshInterval": 1800,
+    "maxLoginAttempts": 5,
+    "lockoutDuration": 900,
+    "enableGeoRestriction": false,
+    "allowedRegions": []
+  },
+  "cache": {
+    "animeMetadataTTL": 86400,
+    "episodeListTTL": 3600,
+    "userSessionTTL": 604800
+  },
+  "notifications": {
+    "enableEmail": true,
+    "enablePush": true,
+    "newEpisodeAlert": true,
+    "subscriptionReminder": true
+  }
+}
