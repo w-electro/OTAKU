@@ -1,0 +1,22 @@
+{
+  "name": "OTAKU - Premium 4K Anime Streaming",
+  "short_name": "OTAKU",
+  "description": "Premium 4K 240fps anime streaming platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#FF6B6B",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

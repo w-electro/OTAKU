@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
@@ -8,13 +8,19 @@ const inter = Inter({
   subsets: ['latin'],
 });
 
+export const viewport: Viewport = {
+  themeColor: '#FF6B6B',
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
-  title: 'AnimeUltra 4K - Premium Anime Streaming',
+  title: 'OTAKU - Premium 4K Anime Streaming',
   description: 'Premium 4K 240fps anime streaming platform. Experience anime like never before with the highest quality content.',
-  keywords: ['anime', '4k', 'streaming', 'premium', 'subscription', 'watch anime'],
-  authors: [{ name: 'AnimeUltra 4K' }],
+  keywords: ['anime', '4k', 'streaming', 'premium', 'subscription', 'watch anime', 'otaku'],
+  authors: [{ name: 'OTAKU' }],
   openGraph: {
-    title: 'AnimeUltra 4K - Premium Anime Streaming',
+    title: 'OTAKU - Premium 4K Anime Streaming',
     description: 'Premium 4K 240fps anime streaming platform',
     type: 'website',
     locale: 'en_US',
@@ -22,11 +28,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AnimeUltra 4K',
+    title: 'OTAKU',
     description: 'Premium 4K 240fps anime streaming platform',
   },
   manifest: '/manifest.json',
-  themeColor: '#FF6B6B',
 };
 
 export default function RootLayout({
