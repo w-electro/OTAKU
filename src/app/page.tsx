@@ -6,6 +6,7 @@ import { AnimeSection } from '@/components/anime/AnimeSection';
 import { HeroSkeleton, AnimeCardSkeleton } from '@/components/ui/Skeleton';
 import { fetchTrendingAnime, fetchPopularAnime, fetchCurrentSeasonAnime, fetchTopRatedAnime } from '@/lib/api/anilist';
 import { auth } from '@/lib/auth';
+import { mockAnimeData } from '@/lib/mockData';
 import type { Anime, AniListAnime } from '@/types';
 
 // Transform AniList anime to our Anime type
@@ -65,13 +66,17 @@ async function getHomePageData() {
       topRated: topRated.map(transformAnime),
     };
   } catch (error) {
-    console.error('Error fetching home page data:', error);
+    console.error('Error fetching home page data, using mock data:', error);
+    // Fallback to mock data when API is unavailable
+    const sortedByPopularity = [...mockAnimeData].sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+    const sortedByScore = [...mockAnimeData].sort((a, b) => (b.averageScore || 0) - (a.averageScore || 0));
+
     return {
-      heroAnime: [],
-      trending: [],
-      popular: [],
-      currentSeason: [],
-      topRated: [],
+      heroAnime: sortedByPopularity.slice(0, 5),
+      trending: sortedByPopularity.slice(0, 10),
+      popular: sortedByPopularity,
+      currentSeason: mockAnimeData.filter(a => a.status === 'RELEASING' || a.seasonYear && a.seasonYear >= 2020).slice(0, 12),
+      topRated: sortedByScore.slice(0, 12),
     };
   }
 }

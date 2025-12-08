@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { AnimeSection } from '@/components/anime/AnimeSection';
 import { EpisodeList } from '@/components/anime/EpisodeCard';
 import { fetchAnimeById } from '@/lib/api/anilist';
+import { getMockAnimeById, mockAnimeData } from '@/lib/mockData';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { getAnimeTitle, truncateText, getStatusName, getSeasonName } from '@/lib/utils';
@@ -23,20 +24,33 @@ async function getAnimeData(anilistId: number) {
     const anilistData = await fetchAnimeById(anilistId);
 
     if (!anilistData) {
+      // Try mock data
+      const mockAnime = getMockAnimeById(anilistId);
+      if (mockAnime) {
+        return {
+          anime: mockAnime,
+          recommendations: mockAnimeData.filter(a => a.id !== mockAnime.id).slice(0, 6),
+        };
+      }
       return null;
     }
 
     // Try to get local data with episodes
-    const localAnime = await prisma.anime.findFirst({
-      where: { anilistId },
-      include: {
-        episodes: {
-          orderBy: { number: 'asc' },
+    let localAnime = null;
+    try {
+      localAnime = await prisma.anime.findFirst({
+        where: { anilistId },
+        include: {
+          episodes: {
+            orderBy: { number: 'asc' },
+          },
+          genres: true,
+          studios: true,
         },
-        genres: true,
-        studios: true,
-      },
-    });
+      });
+    } catch (dbError) {
+      console.error('Database error:', dbError);
+    }
 
     // Transform AniList data
     const anime: Anime = {
@@ -109,7 +123,17 @@ async function getAnimeData(anilistId: number) {
 
     return { anime, recommendations };
   } catch (error) {
-    console.error('Error fetching anime:', error);
+    console.error('Error fetching anime, trying mock data:', error);
+
+    // Fall back to mock data
+    const mockAnime = getMockAnimeById(anilistId);
+    if (mockAnime) {
+      return {
+        anime: mockAnime,
+        recommendations: mockAnimeData.filter(a => a.id !== mockAnime.id).slice(0, 6),
+      };
+    }
+
     return null;
   }
 }
@@ -119,10 +143,20 @@ export default async function AnimePage({ params }: AnimePageProps) {
   const anilistId = parseInt(id, 10);
 
   if (isNaN(anilistId)) {
-    notFound();
+    // Try to find by string ID in mock data
+    const mockAnime = mockAnimeData.find(a => a.id === id);
+    if (!mockAnime) {
+      notFound();
+    }
   }
 
-  const session = await auth();
+  let session = null;
+  try {
+    session = await auth();
+  } catch (e) {
+    console.error('Auth error:', e);
+  }
+
   const data = await getAnimeData(anilistId);
 
   if (!data) {
@@ -136,9 +170,13 @@ export default async function AnimePage({ params }: AnimePageProps) {
   // Get user's subscription
   let userSubscription = null;
   if (session?.user?.id) {
-    userSubscription = await prisma.subscription.findUnique({
-      where: { userId: session.user.id },
-    });
+    try {
+      userSubscription = await prisma.subscription.findUnique({
+        where: { userId: session.user.id },
+      });
+    } catch (e) {
+      console.error('Subscription fetch error:', e);
+    }
   }
 
   return (
@@ -195,9 +233,11 @@ export default async function AnimePage({ params }: AnimePageProps) {
 
                 {/* Quick Actions */}
                 <div className="flex gap-2 mt-4">
-                  <Button variant="gradient" className="flex-1" leftIcon={<Play className="w-5 h-5 fill-white" />}>
-                    Watch
-                  </Button>
+                  <Link href={`/watch/${anime.id}-1`} className="flex-1">
+                    <Button variant="gradient" className="w-full" leftIcon={<Play className="w-5 h-5 fill-white" />}>
+                      Watch
+                    </Button>
+                  </Link>
                   <Button variant="outline" className="p-3">
                     <Plus className="w-5 h-5" />
                   </Button>
