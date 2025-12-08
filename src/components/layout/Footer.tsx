@@ -57,17 +57,17 @@ export function Footer() {
               <div className="relative w-10 h-10">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent rounded-lg" />
                 <span className="absolute inset-0 flex items-center justify-center text-white font-bold text-xl">
-                  A
+                  お
                 </span>
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                AnimeUltra 4K
+              <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                OTAKU
               </span>
             </Link>
             <p className="mt-4 text-gray-400 text-sm">
               {language === 'ar'
-                ? 'منصة البث المميزة للأنمي بجودة 4K و 240fps. استمتع بأفضل جودة بصرية.'
-                : 'Premium 4K 240fps anime streaming platform. Experience the best visual quality.'}
+                ? 'OTAKU - منصة البث المميزة للأنمي بجودة 4K و 240fps. استمتع بأفضل جودة بصرية.'
+                : 'OTAKU - Premium 4K 240fps anime streaming. Experience the best visual quality.'}
             </p>
 
             {/* Social Links */}

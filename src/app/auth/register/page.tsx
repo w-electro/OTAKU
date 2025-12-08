@@ -1,8 +1,8 @@
 import { RegisterForm } from '@/components/auth/RegisterForm';
 
 export const metadata = {
-  title: 'Register - AnimeUltra 4K',
-  description: 'Create your AnimeUltra 4K account',
+  title: 'Register - OTAKU',
+  description: 'Create your OTAKU account',
 };
 
 export default function RegisterPage() {

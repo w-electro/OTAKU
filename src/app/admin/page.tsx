@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Users, Film, Download, CreditCard, TrendingUp, Clock } from 'lucide-react';
 
 export const metadata = {
-  title: 'Admin Dashboard - AnimeUltra 4K',
+  title: 'Admin Dashboard - OTAKU',
 };
 
 export default async function AdminDashboard() {

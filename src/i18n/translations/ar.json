@@ -141,7 +141,7 @@
     "loginTitle": "مرحباً بعودتك",
     "loginSubtitle": "سجل دخولك لحسابك",
     "register": "إنشاء حساب",
-    "registerTitle": "انضم إلى AnimeUltra 4K",
+    "registerTitle": "انضم إلى OTAKU",
     "registerSubtitle": "أنشئ حسابك لبدء المشاهدة",
     "email": "البريد الإلكتروني",
     "password": "كلمة المرور",
@@ -223,7 +223,7 @@
     "privacy": "سياسة الخصوصية",
     "faq": "الأسئلة الشائعة",
     "help": "مركز المساعدة",
-    "copyright": "© {{year}} AnimeUltra 4K. جميع الحقوق محفوظة."
+    "copyright": "© {{year}} OTAKU. جميع الحقوق محفوظة."
   },
   "admin": {
     "dashboard": "لوحة التحكم",

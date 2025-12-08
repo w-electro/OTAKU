@@ -141,7 +141,7 @@
     "loginTitle": "Welcome Back",
     "loginSubtitle": "Sign in to your account",
     "register": "Register",
-    "registerTitle": "Join AnimeUltra 4K",
+    "registerTitle": "Join OTAKU",
     "registerSubtitle": "Create your account to start watching",
     "email": "Email",
     "password": "Password",
@@ -223,7 +223,7 @@
     "privacy": "Privacy Policy",
     "faq": "FAQ",
     "help": "Help Center",
-    "copyright": "© {{year}} AnimeUltra 4K. All rights reserved."
+    "copyright": "© {{year}} OTAKU. All rights reserved."
   },
   "admin": {
     "dashboard": "Dashboard",

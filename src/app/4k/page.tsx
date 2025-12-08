@@ -70,7 +70,7 @@ export default function FourKPage() {
         <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
           {/* Animated Background */}
           <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900">
-            <div className="absolute inset-0 bg-[url('/images/4k-pattern.png')] opacity-5" />
+            <div className="absolute inset-0 bg-[url('/images/4k-pattern.svg')] opacity-5" />
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse-slow" />
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse-slow animation-delay-1000" />
           </div>

@@ -1,11 +1,11 @@
 {
   "site": {
-    "name": "AnimeUltra 4K",
-    "domain": "animeultra4k.com",
+    "name": "OTAKU",
+    "domain": "otaku.tv",
     "defaultLanguage": "en",
     "supportedLanguages": ["en", "ar"],
-    "description": "Premium 4K 240fps Anime Streaming Platform",
-    "logo": "/images/logo.png"
+    "description": "OTAKU - Premium 4K 240fps Anime Streaming Platform",
+    "logo": "/icon.svg"
   },
   "subscription": {
     "tiers": {

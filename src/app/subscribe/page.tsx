@@ -6,7 +6,7 @@ import { prisma } from '@/lib/db';
 import { Check } from 'lucide-react';
 
 export const metadata = {
-  title: 'Subscribe - AnimeUltra 4K',
+  title: 'Subscribe - OTAKU',
   description: 'Choose your subscription plan for premium 4K anime streaming',
 };
 

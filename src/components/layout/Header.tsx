@@ -53,10 +53,10 @@ export function Header({ user }: HeaderProps) {
   const navItems = [
     { href: '/', label: t('nav.home') },
     { href: '/browse', label: t('nav.trending') },
-    { href: '/browse?filter=popular', label: t('nav.popular') },
     { href: '/genres', label: t('nav.genres') },
     { href: '/browse?format=MOVIE', label: t('nav.movies') },
     { href: '/4k', label: t('nav.4kEnhanced') },
+    { href: '/watchlist', label: t('common.watchlist') },
   ];
 
   const toggleLanguage = () => {
@@ -76,15 +76,15 @@ export function Header({ user }: HeaderProps) {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
+          <Link href="/" className="flex items-center gap-2 flex-shrink-0 group">
             <div className="relative w-10 h-10">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent rounded-lg" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary to-accent rounded-lg group-hover:animate-glow transition-all" />
               <span className="absolute inset-0 flex items-center justify-center text-white font-bold text-xl">
-                A
+                お
               </span>
             </div>
-            <span className="hidden sm:block text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              AnimeUltra 4K
+            <span className="hidden sm:block text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              OTAKU
             </span>
           </Link>
 
